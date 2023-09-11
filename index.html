@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSL</title>
+    <link rel="stylesheet" href="hsl.css">
+    <script defer src="hsl.js"></script>
+</head>
+
+<body>
+    <div class="interface">
+        <h1>HSL Color</h1>
+
+        <label for="hue-slider">Hue:</label>
+        <input type="range" name="hue-slider" id="hue-slider" value="0" min="0" max="360">
+        <label for="hue-value" class="hidden">Hue value: </label>
+        <input type="number" id="hue-value" value="0">
+
+        <label for="sat-slider">Saturation:</label>
+        <input type="range" name="sat-slider" id="sat-slider" value="100" min="0" max="100">
+        <label for="sat-value" class="hidden">Saturation value: </label>
+        <input type="number" id="sat-value" value="100">
+
+        <label for="light-slider">Lightness:</label>
+        <input type="range" name="light-slider" id="light-slider" value="50" min="0" max="100">
+        <label for="light-value" class="hidden">Lightness value: </label>
+        <input type="number" id="light-value" value="50">
+
+        <div class="control-text">
+            <div class="hex"></div>
+            <div class="hsl"></div>
+        </div>
+        <div class="alpha-input">
+            <label for="alpha-slider">Alpha:</label>
+            <input type="range" name="alpha-slider" id="alpha-slider" value="255" min="0" max="255">
+        </div>
+
+        <img src="https://assets.codepen.io/92039/possum.png" alt="line drawing of a possum">
+        <div class="color-box"></div>
+        <canvas class="color-wheel" width="200" height="200"></canvas>
+    </div>
+</body>
+
+</html>
