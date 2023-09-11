@@ -5,12 +5,16 @@ const hueSlider = document.querySelector("#hue-slider"),
   hexText = document.querySelector(".hex"),
   hslText = document.querySelector(".hsl"),
   colorBox = document.querySelector(".color-box"),
-  radius = 100,
-  ctxWheel = document.querySelector("canvas.color-wheel").getContext("2d"),
-  ctxPoint = document.querySelector("canvas.color-point").getContext("2d"),
+  canvasWheel = document.querySelector("canvas.color-wheel"),
+  canvasPoint = document.querySelector("canvas.color-point"),
+  ctxWheel = canvasWheel.getContext("2d"),
+  ctxPoint = canvasPoint.getContext("2d"),
   pointRadius = 4;
 
   let hasAlpha = false;
+  let radius = 100;
+
+
 
 const convertRadiansToDegrees = rad => {
   return (rad + Math.PI) * 180 / Math.PI;
@@ -83,24 +87,18 @@ function updateColor() {
   ctxPoint.stroke();
 }
 
-function bindInputs(slider, text, hue = false) {
-  let max = 100;
-  if (hue) {
-    max = 360;
-    slider.addEventListener("input", () => {
-      text.value = slider.value;
-      satSlider.style.background = `linear-gradient(90deg, hsl(${hueSlider.value}, 0%, 50%) 0%, hsl(${hueSlider.value}, 100%, 50%) 100%)`;
+function bindInputs(slider, text, hue = false, light = false) {
+  let max = hue ? 360 : 100;
+  slider.addEventListener("input", () => {
+    text.value = slider.value;
+    satSlider.style.background =   `linear-gradient(90deg, hsl(${hueSlider.value}, 0%, ${lightSlider.value}%) 0%, hsl(${hueSlider.value}, 100%, ${lightSlider.value}%) 100%)`;
+    lightSlider.style.background = `linear-gradient(90deg, hsl(${hueSlider.value}, ${satSlider.value}%, 0%) 0%, hsl(${hueSlider.value}, ${satSlider.value}%, 50%) 50%, hsl(${hueSlider.value}, ${satSlider.value}%, 100%) 100%)`;
+    updateColor();
+    if (light) {
+      drawHSLCircle(radius);
+    }
+  });
 
-      lightSlider.style.background = `linear-gradient(90deg, #000 0%, hsl(${hueSlider.value}, 100%, 50%) 50%, #fff 100%)`;
-
-      updateColor();
-    });
-  } else {
-    slider.addEventListener("input", () => {
-      text.value = slider.value;
-      updateColor();
-    });
-  }
   text.addEventListener("change", function () {
     if (text.value <= max && text.value > 0) {
       slider.value = text.value;
@@ -118,7 +116,7 @@ function drawHSLCircle(radius) {
     const rowLength = 2 * radius;
     const pixelWidth = 4; // each pixel requires 4 spaces in the data array (RGBA)
     const alpha = 255;
-    const value = .5;
+    const value = lightSlider.value / 100;
 
     for (let x = -radius; x <= radius; x++) {
         for (let y = -radius; y <= radius; y++) {
@@ -149,39 +147,7 @@ function drawHSLCircle(radius) {
     ctxWheel.putImageData(image, 0, 0);
 }
 
-/**
- * Convert HSV to RGB value
- * See: https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
- * @param {float} hue
- * @param {float} saturation
- * @param {float} value
- * @returns [r,g,b] each in range [0,255]
- */
-function hsvToRgb(hue, saturation, value) {
-  let chroma = value * saturation;
-  let hue1 = hue / 60;
-  let x = chroma * (1 - Math.abs(hue1 % 2 - 1));
-  let r1, g1, b1;
-  if (hue1 >= 0 && hue1 <= 1) {
-    [r1, g1, b1] = [chroma, x, 0];
-  } else if (hue1 >= 1 && hue1 <= 2) {
-    [r1, g1, b1] = [x, chroma, 0];
-  } else if (hue1 >= 2 && hue1 <= 3) {
-    [r1, g1, b1] = [0, chroma, x];
-  } else if (hue1 >= 3 && hue1 <= 4) {
-    [r1, g1, b1] = [0, x, chroma];
-  } else if (hue1 >= 4 && hue1 <= 5) {
-    [r1, g1, b1] = [x, 0, chroma];
-  } else if (hue1 >= 5 && hue1 <= 6) {
-    [r1, g1, b1] = [chroma, 0, x];
-  }
 
-  let m = value - chroma;
-  let [r, g, b] = [r1 + m, g1 + m, b1 + m];
-
-  // Change r,g,b values from [0,1] to [0,255]
-  return [255 * r, 255 * g, 255 * b];
-}
 
 
 
@@ -192,9 +158,8 @@ function hsvToRgb(hue, saturation, value) {
 ctxPoint.globalCompositeOperation = "destination-over";
 bindInputs(hueSlider, document.querySelector("#hue-value"), true);
 bindInputs(satSlider, document.querySelector("#sat-value"));
-bindInputs(lightSlider, document.querySelector("#light-value"));
+bindInputs(lightSlider, document.querySelector("#light-value"), false, true);
 alphaSlider.addEventListener("input", updateColor);
-
 
 drawHSLCircle(radius);
 updateColor();

@@ -138,7 +138,7 @@
   .color-wheel,
   .color-point {
     grid-area: wheel;
-    justify-self: center;
+    border: 1px solid blue;
   }
 
   input[type="range"] {
