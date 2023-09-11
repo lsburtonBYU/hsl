@@ -77,46 +77,40 @@ alphaSlider.addEventListener("input", updateColor);
 updateColor();
 
 // new
-
+const radius = 100;
   let ctx = wheel.getContext("2d");
-  drawCircle();
+  drawHSLCircle(radius);
 
-  function drawCircle() {
-    const radius = 100;
+  function drawHSLCircle(radius) {
     const image = ctx.createImageData(2 * radius, 2 * radius);
     const data = image.data;
     const rowLength = 2 * radius;
-    const pixelWidth = 4; // each pixel requires 4 slots in the data array (RGBA)
+    const pixelWidth = 4; // each pixel requires 4 spaces in the data array (RGBA)
     const alpha = 255;
+    const value = 1.0;
 
-    for (let y = -radius; y < radius; y++) {
+    for (let y = -radius; y <= radius; y++) {
 
-        for (let x = -radius; x < radius; x++) {
+        for (let x = -radius; x <= radius; x++) {
 
-        let [r, theta] = convertCoordinatesToPolar(x, y);
+        const [distance, theta] = convertCoordinatesToPolar(x, y);
 
-        if (r <= radius) {
-            // process only (x,y) coordinates that are inside circle
+        // process only (x,y) coordinates that are inside circle
+        if (distance <= radius) {
 
-            let deg = rad2deg(theta);
+            const hue = convertRadiansToDegrees(theta);
 
-            // Figure out the starting index of this pixel in the image data array.
-            let adjustedX = x + radius; // convert x from [-50, 50] to [0, 100] (the coordinates of the image data array)
-            let adjustedY = y + radius; // convert y from [-50, 50] to [0, 100] (the coordinates of the image data array)
-            let index = (adjustedX + adjustedY * rowLength) * pixelWidth;
+            const saturation = distance / radius;
 
-            let hue = deg;
-            let saturation = r / radius;
-            let value = 1.0;
+            const [red, green, blue] = hsvToRgb(hue, saturation, value);
 
-            let [red, green, blue] = hsvToRgb(hue, saturation, value);
+            // find index in data array
+            const index = ((x + radius) * rowLength + y + radius) * pixelWidth;
 
             data[index] = red;
             data[index + 1] = green;
             data[index + 2] = blue;
             data[index + 3] = alpha;
-        } else {
-            // console.log(`SKIP: (x: ${x}, y:${y}) = r: ${r}, theta: ${theta}`)
         }
       }
     }
@@ -132,8 +126,7 @@ updateColor();
 
   // rad in [-π, π] range
   // return degree in [0, 360] range
-  function rad2deg(rad) {
-    //   return (rad + Math.PI/2) * 180 / Math.PI;
+  function convertRadiansToDegrees(rad) {
       return (rad + Math.PI) * 180 / Math.PI;
 }
 
