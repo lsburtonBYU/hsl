@@ -12,23 +12,25 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0 2rem;
+    margin: 0 auto;
+    padding: 0 2rem;
+    max-width: 50rem;
   }
 
   .interface {
     display: grid;
     grid-column-gap: 1rem;
-    grid-template-columns: 4rem 1fr 4rem;
+    grid-template-columns: 4rem 1fr 1fr 4rem;
     grid-template-areas:
-      "title title title"
-      "label1 . ."
-      "slider1 slider1 text1"
-      "label2 . ."
-      "slider2 slider2 text2"
-      "label3 . ."
-      "slider3 slider3 text3"
-      "colorinfo colorinfo slider4"
-      "color wheel wheel";
+      "title title title title"
+      "label1 . . ."
+      "slider1 slider1 slider1 text1"
+      "label2 . . ."
+      "slider2 slider2 slider2 text2"
+      "label3 . . ."
+      "slider3 slider3 slider3 text3"
+      "colorinfo colorinfo colorinfo slider4"
+      "color color wheel wheel";
     align-items: center;
   }
 
@@ -133,9 +135,10 @@
     height: 100%;
   }
 
-  .color-wheel {
+  .color-wheel,
+  .color-point {
     grid-area: wheel;
-    border: 1px solid blue;
+    justify-self: center;
   }
 
   input[type="range"] {
